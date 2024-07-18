@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>community.flock.wirespec.plugins.pact</groupId>
+        <artifactId>pact-maven-plugin-parent</artifactId>
+        <version>1.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>example</artifactId>
+
+    <properties>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>community.flock.wirespec.plugins.pact</groupId>
+                <artifactId>pact-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>consumer</id>
+                        <goals>
+                            <goal>generate-consumer-pact-contracts</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <producer>portbase</producer>
+                            <input>${project.basedir}/src/main/wirespec/consumer/portbase</input>
+                            <output>${project.build.directory}/pacts/consumer</output>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>consumer-playground</id>
+                        <goals>
+                            <goal>generate-consumer-pact-contracts</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <producer>wirespec.io</producer>
+                            <input>${project.basedir}/src/main/wirespec/consumer/playground</input>
+                            <output>${project.build.directory}/pacts/consumer</output>
+                        </configuration>
+                    </execution>
+
+                    <execution>
+                        <id>producer</id>
+                        <goals>
+                            <goal>generate-producer-pact-contracts</goal>
+                        </goals>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <input>${project.basedir}/src/main/wirespec/producer</input>
+                            <output>${project.build.directory}/pacts/producer</output>
+                        </configuration>
+                    </execution>
+
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
