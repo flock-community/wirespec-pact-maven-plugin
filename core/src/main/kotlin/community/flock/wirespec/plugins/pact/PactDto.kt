@@ -9,6 +9,7 @@ data class PactDto(
     val producer: NameDTO,
     val interactions: Set<InteractionDto>,
     val messages: Set<MessagesDto>,
+    val metadata: MetadataDto = MetadataDto(),
 )
 
 @Serializable
@@ -27,7 +28,7 @@ data class RequestDto(
     val method: String,
     val path: String,
     val query: String,
-    val headers: Map<String, String>,
+    val headers: Map<String, JsonElement>,
 )
 
 @Serializable
@@ -35,4 +36,20 @@ data class InteractionDto(
     val description: String,
     val request: RequestDto,
     val response: JsonElement?,
+)
+
+@Serializable
+data class MetadataDto(
+    val pactSpecification: PactSpecification = PactSpecification(),
+    val pactJvm: PactJvm = PactJvm(),
+)
+
+@Serializable
+data class PactSpecification(
+    val version: String = "3.0.0",
+)
+
+@Serializable
+data class PactJvm(
+    val version: String = "3.3.3",
 )
