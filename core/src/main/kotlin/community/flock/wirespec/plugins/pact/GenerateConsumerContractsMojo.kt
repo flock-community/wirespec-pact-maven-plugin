@@ -1,8 +1,10 @@
 package community.flock.wirespec.plugins.pact
 
+import community.flock.wirespec.compiler.core.parse.AST
 import community.flock.wirespec.compiler.core.parse.Endpoint
 import community.flock.wirespec.compiler.core.parse.Field.Reference
 import community.flock.wirespec.compiler.core.parse.Node
+import community.flock.wirespec.generator.Generator.generate
 import community.flock.wirespec.plugin.FileExtension
 import community.flock.wirespec.plugin.PackageName
 import community.flock.wirespec.plugin.maven.BaseMojo
@@ -49,28 +51,28 @@ class GenerateConsumerContractsMojo : BaseMojo() {
                     nodes
                         .filterIsInstance<Endpoint>()
                         .map {
-                            val generate = it.responses.first().content?.let { c -> nodes.generate(c.reference) }
+                            val generate = it.responses.first().content?.let { c -> generate(nodes, c.reference) }
                             PactDto(
                                 consumer = NameDTO(project.name), // improve
                                 producer = NameDTO(producer),
                                 interactions =
-                                    setOf(
-                                        InteractionDto(
-                                            "${it.method.name} ${it.path.produce()}",
-                                            request =
-                                                RequestDto(
-                                                    method = it.method.name,
-                                                    path = it.path.produce(),
-                                                    query = it.query.toString(),
-                                                    headers =
-                                                        it.headers.associate { h ->
-                                                            h.identifier.value to
-                                                                nodes.generate(h.reference)
-                                                        },
-                                                ),
-                                            response = generate,
+                                setOf(
+                                    InteractionDto(
+                                        "${it.method.name} ${it.path.produce()}",
+                                        request =
+                                        RequestDto(
+                                            method = it.method.name,
+                                            path = it.path.produce(),
+                                            query = it.query.toString(),
+                                            headers =
+                                            it.headers.associate { h ->
+                                                h.identifier.value to
+                                                        generate(nodes, h.reference)
+                                            },
                                         ),
+                                        response = generate,
                                     ),
+                                ),
                                 messages = emptySet(),
                             )
                         }
@@ -103,13 +105,14 @@ private fun writeFile(
     .resolve("$fileName.${ext.value}")
 
 // TODO: fix me for generating primitives
-fun List<Node>.generate(
+fun generate(
+    ast: AST,
     type: Reference,
     random: Random = kotlin.random.Random.Default,
 ): JsonElement {
     if (type is Reference.Primitive) {
         return TODO("return a primitive")
     } else {
-        return this.(community.flock.wirespec.generator.Generator.generate)(type, random)
+        return ast.generate(type, random)
     }
 }
