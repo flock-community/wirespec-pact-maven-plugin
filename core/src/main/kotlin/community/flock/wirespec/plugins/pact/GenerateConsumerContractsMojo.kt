@@ -13,6 +13,7 @@ import community.flock.wirespec.plugin.toDirectory
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonPrimitive
 import org.apache.maven.plugins.annotations.Mojo
 import org.apache.maven.plugins.annotations.Parameter
 import java.io.File
@@ -111,7 +112,10 @@ fun generate(
     random: Random = kotlin.random.Random.Default,
 ): JsonElement {
     if (type is Reference.Primitive) {
-        TODO("return a primitive")
+        return when(type.type){
+            Reference.Primitive.Type.Integer -> JsonPrimitive(random.nextInt())
+            else -> ast.generate(type, random)
+        }
     } else {
         return ast.generate(type, random)
     }
