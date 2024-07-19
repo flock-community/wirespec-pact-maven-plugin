@@ -111,7 +111,7 @@ fun generate(
     random: Random = kotlin.random.Random.Default,
 ): JsonElement {
     if (type is Reference.Primitive) {
-        return TODO("return a primitive")
+        TODO("return a primitive")
     } else {
         return ast.generate(type, random)
     }
