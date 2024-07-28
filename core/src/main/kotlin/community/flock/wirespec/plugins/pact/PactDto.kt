@@ -7,9 +7,9 @@ import kotlinx.serialization.json.JsonElement
 data class PactDto(
     val consumer: NameDTO,
     val producer: NameDTO,
-    val interactions: Set<InteractionDto>,
-    val messages: Set<MessagesDto>,
-    val metadata: MetadataDto = MetadataDto(),
+    val interactions: List<InteractionDto>,
+    val messages: List<MessagesDto>,
+    val metadata: MetadataDto,
 )
 
 @Serializable
@@ -40,16 +40,16 @@ data class InteractionDto(
 
 @Serializable
 data class MetadataDto(
-    val pactSpecification: PactSpecification = PactSpecification(),
-    val pactJvm: PactJvm = PactJvm(),
+    val pactSpecification: PactSpecification,
+    val pactJvm: PactJvm,
 )
 
 @Serializable
 data class PactSpecification(
-    val version: String = "3.0.0",
+    val version: String,
 )
 
 @Serializable
 data class PactJvm(
-    val version: String = "3.3.3",
+    val version: String,
 )

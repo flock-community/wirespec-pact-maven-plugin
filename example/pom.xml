@@ -1,69 +1,88 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-    <parent>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>community.flock.wirespec.plugins.pact</groupId>
+    <artifactId>pact-maven-plugin-parent</artifactId>
+    <version>1.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>example</artifactId>
+
+  <properties>
+    <junit-jupiter.version>5.10.3</junit-jupiter.version>
+    <kotest.version>5.9.1</kotest.version>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>io.kotest</groupId>
+      <artifactId>kotest-assertions-core-jvm</artifactId>
+      <version>${kotest.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.kotlinx</groupId>
+      <artifactId>kotlinx-serialization-json-jvm</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.junit.jupiter</groupId>
+      <artifactId>junit-jupiter</artifactId>
+      <version>${junit-jupiter.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
         <groupId>community.flock.wirespec.plugins.pact</groupId>
-        <artifactId>pact-maven-plugin-parent</artifactId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
+        <artifactId>pact-maven-plugin</artifactId>
+        <version>${project.version}</version>
+        <executions>
+          <execution>
+            <id>consumer</id>
+            <goals>
+              <goal>generate-consumer-pact-contracts</goal>
+            </goals>
+            <configuration>
+              <producer>portbase</producer>
+              <input>${project.basedir}/src/main/wirespec/consumer/portbase</input>
+              <output>${project.build.directory}/pacts/consumer</output>
+            </configuration>
+          </execution>
+          <execution>
+            <id>consumer-playground</id>
+            <goals>
+              <goal>generate-consumer-pact-contracts</goal>
+            </goals>
+            <phase>generate-test-resources</phase>
+            <configuration>
+              <producer>wirespec.io</producer>
+              <input>${project.basedir}/src/main/wirespec/consumer/playground</input>
+              <output>${project.build.directory}/pacts/consumer</output>
+              <seed>123456789</seed>
+            </configuration>
+          </execution>
 
-    <artifactId>example</artifactId>
+          <execution>
+            <id>producer</id>
+            <goals>
+              <goal>generate-producer-pact-contracts</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <consumer>a-consumer-of-my-api</consumer>
+              <input>${project.basedir}/src/main/wirespec/producer</input>
+              <output>${project.build.directory}/pacts/producer</output>
+              <seed>98453</seed>
+            </configuration>
+          </execution>
 
-    <properties>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>community.flock.wirespec.plugins.pact</groupId>
-                <artifactId>pact-maven-plugin</artifactId>
-                <version>${project.version}</version>
-                <executions>
-                    <execution>
-                        <id>consumer</id>
-                        <goals>
-                            <goal>generate-consumer-pact-contracts</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <producer>portbase</producer>
-                            <input>${project.basedir}/src/main/wirespec/consumer/portbase</input>
-                            <output>${project.build.directory}/pacts/consumer</output>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>consumer-playground</id>
-                        <goals>
-                            <goal>generate-consumer-pact-contracts</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <producer>wirespec.io</producer>
-                            <input>${project.basedir}/src/main/wirespec/consumer/playground</input>
-                            <output>${project.build.directory}/pacts/consumer</output>
-                        </configuration>
-                    </execution>
-
-                    <execution>
-                        <id>producer</id>
-                        <goals>
-                            <goal>generate-producer-pact-contracts</goal>
-                        </goals>
-                        <phase>generate-sources</phase>
-                        <configuration>
-                            <input>${project.basedir}/src/main/wirespec/producer</input>
-                            <output>${project.build.directory}/pacts/producer</output>
-                        </configuration>
-                    </execution>
-
-                </executions>
-            </plugin>
-        </plugins>
-    </build>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>

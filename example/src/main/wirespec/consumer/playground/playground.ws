@@ -40,3 +40,5 @@ endpoint DeleteTodo DELETE /todos/{id:UUID} -> {
     200 -> Todo
     404 -> Error
 }
+
+channel TodoChannel -> Todo
